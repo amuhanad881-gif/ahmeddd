@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080b10;
+  --surface: #0e1218;
+  --card: #131820;
+  --border: #1e2535;
+  --accent: #00ffe0;
+  --accent2: #ff6b35;
+  --blue: #4da6ff;
+  --green: #39ff7a;
+  --yellow: #ffd93d;
+  --red: #ff4d6d;
+  --purple: #bf5af2;
+  --text: #e8edf5;
+  --muted: #5a6478;
+  --new-color: #39ff7a;
+  --good-color: #4da6ff;
+  --master-color: #bf5af2;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Manrope',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,224,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,224,0.025) 1px,transparent 1px);
+  background-size:50px 50px;
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ===================== SCREENS ===================== */
+.screen{display:none;min-height:100vh;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ===================== WELCOME SCREEN ===================== */
+#screen-welcome{
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+  text-align:center;
+}
+.logo-area{margin-bottom:50px;animation:floatIn 0.8s ease both;}
+.logo-tag{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:4px;
+  text-transform:uppercase;
+  background:rgba(0,255,224,0.08);
+  border:1px solid rgba(0,255,224,0.2);
+  padding:6px 18px;
+  border-radius:20px;
+  display:inline-block;
+  margin-bottom:20px;
+}
+.logo-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(2.5rem,7vw,5rem);
+  font-weight:900;
+  background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--blue) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;
+  letter-spacing:-1px;
+}
+.logo-sub{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--muted);
+  margin-top:12px;
+}
+.level-question{
+  font-size:1.1rem;
+  font-weight:700;
+  color:var(--text);
+  margin-bottom:30px;
+}
+.level-cards{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  justify-content:center;
+  max-width:800px;
+}
+.level-card{
+  background:var(--card);
+  border:2px solid var(--border);
+  border-radius:16px;
+  padding:32px 28px;
+  cursor:pointer;
+  transition:all 0.3s;
+  width:220px;
+  position:relative;
+  overflow:hidden;
+}
+.level-card::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  opacity:0;
+  transition:opacity 0.3s;
+  border-radius:14px;
+}
+.level-card.new-card::before{background:radial-gradient(circle at 50% 0%,rgba(57,255,122,0.12),transparent 70%);}
+.level-card.good-card::before{background:radial-gradient(circle at 50% 0%,rgba(77,166,255,0.12),transparent 70%);}
+.level-card.master-card::before{background:radial-gradient(circle at 50% 0%,rgba(191,90,242,0.12),transparent 70%);}
+.level-card:hover{transform:translateY(-8px);border-color:var(--accent);}
+.level-card:hover::before{opacity:1;}
+.level-card.new-card:hover{border-color:var(--new-color);}
+.level-card.good-card:hover{border-color:var(--good-color);}
+.level-card.master-card:hover{border-color:var(--master-color);}
+.level-icon{font-size:2.5rem;margin-bottom:14px;display:block;}
+.level-name{
+  font-family:'Orbitron',monospace;
+  font-size:1rem;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.new-card .level-name{color:var(--new-color);}
+.good-card .level-name{color:var(--good-color);}
+.master-card .level-name{color:var(--master-color);}
+.level-desc{font-size:12px;color:var(--muted);line-height:1.6;}
+
+/* ===================== LESSON SCREEN ===================== */
+#screen-lesson{padding:0;}
+.lesson-header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 30px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.lesson-brand{
+  font-family:'Orbitron',monospace;
+  font-size:14px;
+  color:var(--accent);
+  font-weight:700;
+}
+.lesson-level-badge{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  padding:4px 12px;
+  border-radius:12px;
+  font-weight:600;
+}
+.badge-new{background:rgba(57,255,122,0.12);color:var(--new-color);border:1px solid rgba(57,255,122,0.3);}
+.badge-good{background:rgba(77,166,255,0.12);color:var(--good-color);border:1px solid rgba(77,166,255,0.3);}
+.badge-master{background:rgba(191,90,242,0.12);color:var(--master-color);border:1px solid rgba(191,90,242,0.3);}
+
+.lesson-layout{display:flex;min-height:calc(100vh - 61px);}
+
+/* Sidebar */
+.sidebar{
+  width:260px;
+  min-width:260px;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:20px 0;
+  overflow-y:auto;
+}
+.sidebar-title{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  padding:0 20px 12px;
+}
+.lesson-nav-item{
+  padding:12px 20px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:13px;
+  color:var(--muted);
+  border-left:3px solid transparent;
+  transition:all 0.2s;
+}
+.lesson-nav-item:hover{background:rgba(255,255,255,0.03);color:var(--text);}
+.lesson-nav-item.active{
+  color:var(--accent);
+  border-left-color:var(--accent);
+  background:rgba(0,255,224,0.05);
+}
+.lesson-nav-item.done{color:var(--green);}
+.lesson-nav-item .nav-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--muted);
+  min-width:20px;
+}
+.nav-check{color:var(--green);font-size:12px;}
+
+/* Main content */
+.lesson-main{
+  flex:1;
+  padding:40px;
+  max-width:800px;
+  overflow-y:auto;
+}
+.lesson-content{display:none;}
+.lesson-content.active{display:block;animation:fadeUp 0.4s ease both;}
+
+.lesson-topic{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.lesson-title{
+  font-family:'Orbitron',monospace;
+  font-size:1.6rem;
+  font-weight:700;
+  margin-bottom:16px;
+  line-height:1.3;
+}
+.lesson-intro{
+  font-size:15px;
+  line-height:1.8;
+  color:#a0aec0;
+  margin-bottom:28px;
+}
+
+/* Code block */
+.code-block{
+  background:#0a0d12;
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  margin:20px 0;
+}
+.code-top{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:10px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.code-filename{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--accent);}
+.copy-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  padding:3px 10px;
+  border-radius:5px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.copy-btn:hover{border-color:var(--green);color:var(--green);}
+.copy-btn.ok{border-color:var(--green);color:var(--green);}
+pre{
+  padding:20px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  line-height:1.9;
+  overflow-x:auto;
+  color:#c9d1e0;
+}
+.kw{color:#bf5af2;}
+.str{color:#ffd93d;}
+.num{color:#39ff7a;}
+.cmt{color:#3d4f6b;font-style:italic;}
+.fn{color:#00ffe0;}
+.ty{color:#ff9f43;}
+.op{color:#ff6b35;}
+
+/* Info box */
+.info-box{
+  border-radius:10px;
+  padding:16px 20px;
+  margin:18px 0;
+  font-size:14px;
+  line-height:1.7;
+}
+.info-tip{background:rgba(255,217,61,0.07);border-left:3px solid var(--yellow);color:#c9a227;}
+.info-note{background:rgba(0,255,224,0.06);border-left:3px solid var(--accent);color:#7ecfc4;}
+.info-warn{background:rgba(255,77,109,0.07);border-left:3px solid var(--red);color:#c9596e;}
+
+/* Concept table */
+.concept-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:13px;}
+.concept-table th{
+  background:var(--surface);
+  padding:12px 16px;
+  text-align:left;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:1px;
+  border-bottom:1px solid var(--border);
+}
+.concept-table td{
+  padding:11px 16px;
+  border-bottom:1px solid rgba(30,37,53,0.5);
+  font-family:'IBM Plex Mono',monospace;
+  color:#a0aec0;
+}
+.concept-table tr:hover td{background:rgba(255,255,255,0.02);}
+
+/* Next button */
+.next-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  color:#000;
+  font-family:'Orbitron',monospace;
+  font-size:13px;
+  font-weight:700;
+  padding:14px 30px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  margin-top:30px;
+  transition:all 0.2s;
+  letter-spacing:1px;
+}
+.next-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,255,224,0.3);}
+.quiz-start-btn{
+  background:linear-gradient(135deg,var(--yellow),var(--accent2));
+}
+
+/* Progress bar */
+.progress-strip{
+  background:var(--border);
+  height:3px;
+  width:100%;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--accent),var(--blue));
+  transition:width 0.5s ease;
+}
+
+/* ===================== QUIZ SCREEN ===================== */
+#screen-quiz{padding:0;}
+.quiz-header{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:16px 30px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.quiz-counter{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--muted);
+}
+.quiz-counter span{color:var(--accent);}
+.quiz-score-live{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:var(--green);
+}
+.quiz-body{
+  max-width:700px;
+  margin:0 auto;
+  padding:50px 20px;
+  flex:1;
+}
+.quiz-progress{
+  display:flex;
+  gap:6px;
+  margin-bottom:40px;
+  flex-wrap:wrap;
+}
+.q-dot{
+  width:28px;height:6px;
+  border-radius:3px;
+  background:var(--border);
+  transition:background 0.3s;
+}
+.q-dot.current{background:var(--accent);}
+.q-dot.correct{background:var(--green);}
+.q-dot.wrong{background:var(--red);}
+
+.quiz-q-num{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:2px;
+  margin-bottom:12px;
+}
+.quiz-question{
+  font-size:1.2rem;
+  font-weight:700;
+  line-height:1.5;
+  margin-bottom:30px;
+}
+.quiz-code{
+  background:#0a0d12;
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:16px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  line-height:1.8;
+  margin-bottom:24px;
+  color:#c9d1e0;
+}
+.options{display:flex;flex-direction:column;gap:12px;}
+.opt{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px 20px;
+  cursor:pointer;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  transition:all 0.2s;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  color:var(--text);
+}
+.opt:hover:not(.locked){border-color:var(--accent);color:var(--accent);transform:translateX(4px);}
+.opt.correct{background:rgba(57,255,122,0.1);border-color:var(--green);color:var(--green);}
+.opt.wrong{background:rgba(255,77,109,0.1);border-color:var(--red);color:var(--red);}
+.opt-letter{
+  width:26px;height:26px;
+  border-radius:6px;
+  background:var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+  flex-shrink:0;
+}
+.opt.correct .opt-letter{background:var(--green);color:#000;}
+.opt.wrong .opt-letter{background:var(--red);color:#fff;}
+.feedback-box{
+  margin-top:20px;
+  padding:16px 20px;
+  border-radius:10px;
+  font-size:14px;
+  line-height:1.6;
+  display:none;
+  animation:fadeUp 0.3s ease both;
+}
+.feedback-box.show{display:block;}
+.feedback-box.ok{background:rgba(57,255,122,0.08);border:1px solid rgba(57,255,122,0.2);color:var(--green);}
+.feedback-box.fail{background:rgba(255,77,109,0.08);border:1px solid rgba(255,77,109,0.2);color:#ff8fa3;}
+.next-q-btn{
+  display:none;
+  margin-top:24px;
+  background:var(--accent);
+  color:#000;
+  font-family:'Orbitron',monospace;
+  font-size:12px;
+  font-weight:700;
+  padding:12px 28px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:all 0.2s;
+}
+.next-q-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,255,224,0.3);}
+.next-q-btn.show{display:inline-flex;align-items:center;gap:8px;}
+
+/* ===================== RESULT SCREEN ===================== */
+#screen-result{
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+  text-align:center;
+}
+.result-icon{font-size:4rem;margin-bottom:20px;animation:bounce 0.6s ease both;}
+.result-title{
+  font-family:'Orbitron',monospace;
+  font-size:2rem;
+  font-weight:900;
+  margin-bottom:10px;
+}
+.result-score-big{
+  font-family:'Orbitron',monospace;
+  font-size:4rem;
+  font-weight:900;
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin:20px 0;
+}
+.result-msg{color:var(--muted);font-size:15px;line-height:1.7;max-width:500px;margin:0 auto 30px;}
+.result-breakdown{
+  display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin:20px 0 30px;
+}
+.rb-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px 30px;
+  min-width:130px;
+}
+.rb-num{
+  font-family:'Orbitron',monospace;
+  font-size:1.8rem;
+  font-weight:700;
+  margin-bottom:6px;
+}
+.rb-label{font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.result-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.res-btn{
+  font-family:'Orbitron',monospace;
+  font-size:12px;
+  font-weight:700;
+  padding:13px 26px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  letter-spacing:1px;
+  transition:all 0.2s;
+}
+.res-btn:hover{transform:translateY(-2px);}
+.res-btn-primary{background:linear-gradient(135deg,var(--accent),var(--blue));color:#000;}
+.res-btn-secondary{background:var(--card);border:1px solid var(--border);color:var(--text);}
+
+/* ===================== UTILS ===================== */
+@keyframes floatIn{from{opacity:0;transform:translateY(-30px);}to{opacity:1;transform:none;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:none;}}
+@keyframes bounce{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+
+.hidden{display:none!important;}
+@media(max-width:700px){
+  .sidebar{display:none;}
+  .lesson-main{padding:24px 16px;}
+  .level-cards{flex-direction:column;align-items:center;}
+  .level-card{width:100%;max-width:320px;}
+  .quiz-body{padding:30px 16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== WELCOME SCREEN ===== -->
+<div id="screen-welcome" class="screen active">
+  <div class="logo-area">
+    <div class="logo-tag">// interactive learning</div>
+    <div class="logo-title">C++ ACADEMY</div>
+    <div class="logo-sub">// master c++ from zero to hero</div>
+  </div>
+  <p class="level-question">Choose your level to get the right lessons for you 👇</p>
+  <div class="level-cards">
+    <div class="level-card new-card" onclick="startLevel('new')">
+      <span class="level-icon">🌱</span>
+      <div class="level-name">NEW</div>
+      <div class="level-desc">Never coded before? Start here. We explain everything from scratch — what is a variable, how to print, and more.</div>
+    </div>
+    <div class="level-card good-card" onclick="startLevel('good')">
+      <span class="level-icon">⚡</span>
+      <div class="level-name">GOOD</div>
+      <div class="level-desc">You know the basics. Level up with functions, arrays, pointers, file handling, and OOP concepts.</div>
+    </div>
+    <div class="level-card master-card" onclick="startLevel('master')">
+      <span class="level-icon">🔥</span>
+      <div class="level-name">MASTER</div>
+      <div class="level-desc">You're experienced. Deep dive into templates, STL, memory management, design patterns, and advanced tricks.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LESSON SCREEN ===== -->
+<div id="screen-lesson" class="screen">
+  <div class="lesson-header">
+    <div class="lesson-brand">C++ ACADEMY</div>
+    <div id="level-badge" class="lesson-level-badge"></div>
+    <button class="next-btn" style="margin:0;padding:10px 20px;font-size:11px;" onclick="goToQuiz()">Start Quiz 🧠</button>
+  </div>
+  <div class="progress-strip"><div class="progress-fill" id="lesson-progress" style="width:0%"></div></div>
+  <div class="lesson-layout">
+    <div class="sidebar">
+      <div class="sidebar-title">Lessons</div>
+      <div id="lesson-nav"></div>
+    </div>
+    <div class="lesson-main" id="lesson-main"></div>
+  </div>
+</div>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-header">
+    <div class="lesson-brand">C++ ACADEMY — QUIZ</div>
+    <div class="quiz-counter">Question <span id="q-num">1</span> / 15</div>
+    <div class="quiz-score-live">Score: <span id="live-score">0</span></div>
+  </div>
+  <div class="quiz-body">
+    <div class="quiz-progress" id="quiz-dots"></div>
+    <div id="quiz-area"></div>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="screen-result" class="screen">
+  <div id="result-icon" class="result-icon"></div>
+  <div id="result-title" class="result-title"></div>
+  <div class="result-score-big" id="result-score"></div>
+  <div id="result-msg" class="result-msg"></div>
+  <div class="result-breakdown">
+    <div class="rb-card"><div class="rb-num" id="rb-correct" style="color:var(--green)">0</div><div class="rb-label">Correct</div></div>
+    <div class="rb-card"><div class="rb-num" id="rb-wrong" style="color:var(--red)">0</div><div class="rb-label">Wrong</div></div>
+    <div class="rb-card"><div class="rb-num" id="rb-pct" style="color:var(--accent)">0%</div><div class="rb-label">Score</div></div>
+  </div>
+  <div class="result-btns">
+    <button class="res-btn res-btn-primary" onclick="retakeQuiz()">🔁 Retake Quiz</button>
+    <button class="res-btn res-btn-secondary" onclick="backToLessons()">📚 Back to Lessons</button>
+    <button class="res-btn res-btn-secondary" onclick="backToWelcome()">🏠 Change Level</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  DATA
+// ============================================================
+const LEVELS = {
+  new: {
+    badge: 'NEW STUDENT',
+    badgeClass: 'badge-new',
+    lessons: [
+      {
+        title: 'What is C++?',
+        topic: 'Introduction',
+        content: `
+          <div class="lesson-topic">Introduction</div>
+          <div class="lesson-title">What is C++?</div>
+          <div class="lesson-intro">C++ is one of the most powerful programming languages in the world. It was created by Bjarne Stroustrup in 1979. Games, operating systems, browsers — many are built with C++!</div>
+          <div class="info-note">💡 C++ is called a <strong>"compiled"</strong> language — you write code, then a compiler turns it into a program your computer can run.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">hello.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="cmt">// My first C++ program!</span>
+<span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Hello, World!"</span> <span class="op">&lt;&lt;</span> endl;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre></div>
+          <div class="info-tip">⚡ <strong>#include &lt;iostream&gt;</strong> lets you use cout to print. Every C++ program needs <strong>int main()</strong> — it's where execution starts.</div>
+          <table class="concept-table"><thead><tr><th>Part</th><th>Meaning</th></tr></thead><tbody>
+          <tr><td>#include &lt;iostream&gt;</td><td>Include input/output library</td></tr>
+          <tr><td>using namespace std;</td><td>Use standard functions without std::</td></tr>
+          <tr><td>int main()</td><td>Main function — entry point</td></tr>
+          <tr><td>cout &lt;&lt;</td><td>Print to screen</td></tr>
+          <tr><td>endl</td><td>New line (like pressing Enter)</td></tr>
+          <tr><td>return 0;</td><td>Program finished successfully</td></tr>
+          </tbody></table>
+        `
+      },
+      {
+        title: 'Variables & Data Types',
+        topic: 'Basics',
+        content: `
+          <div class="lesson-topic">Basics</div>
+          <div class="lesson-title">Variables & Data Types</div>
+          <div class="lesson-intro">A variable is like a box that stores a value. Every box has a type — numbers, text, true/false, etc.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">variables.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="ty">int</span>    age    = <span class="num">20</span>;         <span class="cmt">// whole number</span>
+<span class="ty">double</span> gpa    = <span class="num">3.75</span>;       <span class="cmt">// decimal number</span>
+<span class="ty">string</span> name   = <span class="str">"Ahmed"</span>;   <span class="cmt">// text</span>
+<span class="ty">bool</span>   passed = <span class="kw">true</span>;      <span class="cmt">// true or false</span>
+<span class="ty">char</span>   grade  = <span class="str">'A'</span>;       <span class="cmt">// single character</span>
+
+cout <span class="op">&lt;&lt;</span> <span class="str">"Name: "</span> <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> endl;
+cout <span class="op">&lt;&lt;</span> <span class="str">"Age:  "</span> <span class="op">&lt;&lt;</span> age  <span class="op">&lt;&lt;</span> endl;</pre></div>
+          <table class="concept-table"><thead><tr><th>Type</th><th>Stores</th><th>Example</th></tr></thead><tbody>
+          <tr><td>int</td><td>Whole numbers</td><td>5, -3, 100</td></tr>
+          <tr><td>double</td><td>Decimal numbers</td><td>3.14, 9.99</td></tr>
+          <tr><td>string</td><td>Text</td><td>"Hello"</td></tr>
+          <tr><td>bool</td><td>True or False</td><td>true, false</td></tr>
+          <tr><td>char</td><td>Single character</td><td>'A', 'z'</td></tr>
+          </tbody></table>
+          <div class="info-warn">⚠️ Always end every statement with a <strong>semicolon ;</strong> — forgetting it is the #1 beginner mistake!</div>
+        `
+      },
+      {
+        title: 'Input & Output',
+        topic: 'Basics',
+        content: `
+          <div class="lesson-topic">Basics</div>
+          <div class="lesson-title">Input & Output</div>
+          <div class="lesson-intro">cout prints to the screen. cin reads what the user types. Together they make interactive programs!</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">input.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    <span class="ty">string</span> name;
+    <span class="ty">int</span>    age;
+
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Enter your name: "</span>;
+    cin  <span class="op">&gt;&gt;</span> name;
+
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Enter your age: "</span>;
+    cin  <span class="op">&gt;&gt;</span> age;
+
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Hello, "</span> <span class="op">&lt;&lt;</span> name
+         <span class="op">&lt;&lt;</span> <span class="str">"! You are "</span> <span class="op">&lt;&lt;</span> age <span class="op">&lt;&lt;</span> <span class="str">" years old."</span> <span class="op">&lt;&lt;</span> endl;
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre></div>
+          <div class="info-note">💡 <strong>cout &lt;&lt;</strong> = output (print). <strong>cin &gt;&gt;</strong> = input (read). The arrows show direction of data flow!</div>
+        `
+      },
+      {
+        title: 'If / Else Conditions',
+        topic: 'Control Flow',
+        content: `
+          <div class="lesson-topic">Control Flow</div>
+          <div class="lesson-title">If / Else Conditions</div>
+          <div class="lesson-intro">Conditions let your program make decisions. "If this is true, do this. Otherwise, do that."</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">conditions.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="ty">int</span> score = <span class="num">75</span>;
+
+<span class="kw">if</span> (score >= <span class="num">90</span>) {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Grade: A"</span> <span class="op">&lt;&lt;</span> endl;
+} <span class="kw">else if</span> (score >= <span class="num">80</span>) {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Grade: B"</span> <span class="op">&lt;&lt;</span> endl;
+} <span class="kw">else if</span> (score >= <span class="num">70</span>) {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Grade: C"</span> <span class="op">&lt;&lt;</span> endl;
+} <span class="kw">else</span> {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Grade: F"</span> <span class="op">&lt;&lt;</span> endl;
+}</pre></div>
+          <table class="concept-table"><thead><tr><th>Operator</th><th>Meaning</th></tr></thead><tbody>
+          <tr><td>==</td><td>Equal to</td></tr>
+          <tr><td>!=</td><td>Not equal to</td></tr>
+          <tr><td>&gt; / &lt;</td><td>Greater / Less than</td></tr>
+          <tr><td>&gt;= / &lt;=</td><td>Greater or equal / Less or equal</td></tr>
+          <tr><td>&amp;&amp;</td><td>AND (both must be true)</td></tr>
+          <tr><td>||</td><td>OR (at least one true)</td></tr>
+          </tbody></table>
+        `
+      },
+      {
+        title: 'Loops (for & while)',
+        topic: 'Control Flow',
+        content: `
+          <div class="lesson-topic">Control Flow</div>
+          <div class="lesson-title">Loops — for & while</div>
+          <div class="lesson-intro">Loops repeat code automatically. Instead of writing the same thing 100 times, write it once inside a loop!</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">loops.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="cmt">// for loop — when you know how many times</span>
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">1</span>; i <= <span class="num">5</span>; i++) {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Count: "</span> <span class="op">&lt;&lt;</span> i <span class="op">&lt;&lt;</span> endl;
+}
+
+<span class="cmt">// while loop — when you don't know how many times</span>
+<span class="ty">int</span> n = <span class="num">1</span>;
+<span class="kw">while</span> (n <= <span class="num">5</span>) {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"n = "</span> <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> endl;
+    n++;
+}
+
+<span class="cmt">// do-while — runs at least once</span>
+<span class="kw">do</span> {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Runs at least once!"</span> <span class="op">&lt;&lt;</span> endl;
+} <span class="kw">while</span> (<span class="kw">false</span>);</pre></div>
+          <div class="info-tip">⚡ <strong>i++</strong> means "add 1 to i". It's short for i = i + 1. You'll use this constantly!</div>
+        `
+      },
+    ],
+    quizzes: [
+      {q:"What does cout do in C++?",opts:["Reads user input","Prints to screen","Creates a variable","Ends the program"],ans:1,exp:"cout (character output) with << prints text to the screen."},
+      {q:"Which symbol ends every statement in C++?",opts:[".",",",";",":"],ans:2,exp:"Every statement must end with a semicolon ; — it's one of the most important rules in C++!"},
+      {q:"What data type stores the text \"Hello\"?",opts:["int","bool","char","string"],ans:3,exp:"string stores text (words, sentences). char only stores a single character like 'H'."},
+      {q:"What does cin >> do?",opts:["Prints text","Reads user input","Creates a loop","Declares a variable"],ans:1,exp:"cin (character input) reads what the user types from the keyboard."},
+      {q:"What is the value of: int x = 10 % 3;",opts:["3","1","0","2"],ans:1,exp:"% is the modulo operator — it gives the remainder. 10 divided by 3 = 3 remainder 1."},
+      {q:"Which loop always runs at least once?",opts:["for loop","while loop","do-while loop","if statement"],ans:2,exp:"do-while executes the block FIRST, then checks the condition — so it always runs at least once."},
+      {q:"What does bool store?",opts:["Numbers","Text","true or false","Decimal numbers"],ans:2,exp:"bool is a boolean — it only holds true or false. Used for yes/no decisions."},
+      {q:"What is int main() ?",opts:["A variable","A loop","The main function where program starts","A library"],ans:2,exp:"int main() is the entry point of every C++ program. Execution always starts here."},
+      {q:"Which operator means 'equal to' in a condition?",opts:["=","==","===","!="],ans:1,exp:"== checks equality. A single = is assignment (gives a value). Never confuse them!"},
+      {q:"What does i++ do?",opts:["Subtract 1 from i","Multiply i by 2","Add 1 to i","Print i"],ans:2,exp:"i++ is shorthand for i = i + 1. It increments (increases) i by 1."},
+      {q:"Which header is needed to use cout and cin?",opts:["<string>","<math>","<iostream>","<fstream>"],ans:2,exp:"#include <iostream> gives you access to cout and cin for input/output."},
+      {q:"What does // do in C++?",opts:["Divides two numbers","Starts a comment","Ends the program","Creates a function"],ans:1,exp:"// starts a single-line comment. The compiler ignores everything after // on that line."},
+      {q:"What type stores the number 3.14?",opts:["int","string","bool","double"],ans:3,exp:"double stores decimal/floating-point numbers. int only stores whole numbers."},
+      {q:"What does 'return 0;' mean at the end of main()?",opts:["Print zero","Delete the program","Program ended successfully","Start a loop"],ans:2,exp:"return 0 tells the operating system the program finished without errors. It's standard practice."},
+      {q:"Which keyword is used to make a decision?",opts:["for","while","if","cout"],ans:2,exp:"if checks a condition and executes code only when that condition is true."}
+    ]
+  },
+
+  good: {
+    badge: 'GOOD LEVEL',
+    badgeClass: 'badge-good',
+    lessons: [
+      {
+        title: 'Functions',
+        topic: 'Functions',
+        content: `
+          <div class="lesson-topic">Functions</div>
+          <div class="lesson-title">Functions — Reusable Code Blocks</div>
+          <div class="lesson-intro">Functions let you write code once and call it many times. They make programs organized, readable, and easy to fix.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">functions.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="cmt">// Function that returns a value</span>
+<span class="ty">int</span> <span class="fn">add</span>(<span class="ty">int</span> a, <span class="ty">int</span> b) {
+    <span class="kw">return</span> a + b;
+}
+
+<span class="cmt">// Function that returns nothing (void)</span>
+<span class="ty">void</span> <span class="fn">greet</span>(<span class="ty">string</span> name) {
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Hello, "</span> <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="str">"!"</span> <span class="op">&lt;&lt;</span> endl;
+}
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    <span class="fn">greet</span>(<span class="str">"Ahmed"</span>);
+    cout <span class="op">&lt;&lt;</span> <span class="fn">add</span>(<span class="num">5</span>, <span class="num">3</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// prints 8</span>
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre></div>
+          <div class="info-tip">⚡ Forward declarations: if a function is used before it's defined, add <strong>void greet(string);</strong> at the top as a "promise" to the compiler.</div>
+        `
+      },
+      {
+        title: 'Arrays',
+        topic: 'Data Structures',
+        content: `
+          <div class="lesson-topic">Data Structures</div>
+          <div class="lesson-title">Arrays — Store Multiple Values</div>
+          <div class="lesson-intro">An array stores many values of the same type under one name. Instead of 10 separate variables, use one array!</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">arrays.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="ty">int</span> scores[<span class="num">5</span>] = {<span class="num">90</span>, <span class="num">85</span>, <span class="num">78</span>, <span class="num">92</span>, <span class="num">88</span>};
+
+<span class="cmt">// Access by index (starts at 0!)</span>
+cout <span class="op">&lt;&lt;</span> scores[<span class="num">0</span>] <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 90</span>
+cout <span class="op">&lt;&lt;</span> scores[<span class="num">4</span>] <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 88</span>
+
+<span class="cmt">// Loop through array</span>
+<span class="ty">int</span> total = <span class="num">0</span>;
+<span class="kw">for</span> (<span class="ty">int</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) {
+    total += scores[i];
+}
+cout <span class="op">&lt;&lt;</span> <span class="str">"Average: "</span> <span class="op">&lt;&lt;</span> total / <span class="num">5</span> <span class="op">&lt;&lt;</span> endl;</pre></div>
+          <div class="info-warn">⚠️ Arrays start at index <strong>0</strong>, not 1! An array of size 5 has indexes 0, 1, 2, 3, 4.</div>
+        `
+      },
+      {
+        title: 'Pointers',
+        topic: 'Memory',
+        content: `
+          <div class="lesson-topic">Memory</div>
+          <div class="lesson-title">Pointers — Memory Addresses</div>
+          <div class="lesson-intro">Every variable is stored somewhere in memory. A pointer stores the memory address of another variable — like storing a house address instead of the house itself.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">pointers.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="ty">int</span> x = <span class="num">42</span>;
+<span class="ty">int</span>* ptr = &x;   <span class="cmt">// ptr stores the address of x</span>
+
+cout <span class="op">&lt;&lt;</span> x       <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 42 (the value)</span>
+cout <span class="op">&lt;&lt;</span> &x      <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// address (like 0x7ff...)</span>
+cout <span class="op">&lt;&lt;</span> ptr     <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// same address</span>
+cout <span class="op">&lt;&lt;</span> *ptr    <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 42 (dereferencing = get value)</span>
+
+*ptr = <span class="num">99</span>;  <span class="cmt">// change x through pointer</span>
+cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// now prints 99!</span></pre></div>
+          <div class="info-note">💡 <strong>&</strong> = address of. <strong>*</strong> = value at address (dereference). Pointers are powerful but need careful use.</div>
+        `
+      },
+      {
+        title: 'File Handling',
+        topic: 'Files',
+        content: `
+          <div class="lesson-topic">Files</div>
+          <div class="lesson-title">File Handling — Read & Write Files</div>
+          <div class="lesson-intro">Programs can save data to files so it persists after the program closes. Use ofstream to write, ifstream to read.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">files.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">#include</span> <span class="str">&lt;fstream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="cmt">// Write to file</span>
+<span class="ty">ofstream</span> outFile(<span class="str">"data.txt"</span>);
+outFile <span class="op">&lt;&lt;</span> <span class="str">"Ahmed 25"</span> <span class="op">&lt;&lt;</span> endl;
+outFile.<span class="fn">close</span>();
+
+<span class="cmt">// Append to file (don't overwrite)</span>
+<span class="ty">ofstream</span> appFile(<span class="str">"data.txt"</span>, ios::app);
+appFile <span class="op">&lt;&lt;</span> <span class="str">"Sara 22"</span> <span class="op">&lt;&lt;</span> endl;
+appFile.<span class="fn">close</span>();
+
+<span class="cmt">// Read from file</span>
+<span class="ty">ifstream</span> inFile(<span class="str">"data.txt"</span>);
+<span class="ty">string</span> name; <span class="ty">int</span> age;
+<span class="kw">while</span> (inFile <span class="op">&gt;&gt;</span> name <span class="op">&gt;&gt;</span> age) {
+    cout <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="str">" is "</span> <span class="op">&lt;&lt;</span> age <span class="op">&lt;&lt;</span> endl;
+}
+inFile.<span class="fn">close</span>();</pre></div>
+          <div class="info-tip">⚡ <strong>ios::app</strong> = append mode (adds to end). Without it, writing to an existing file will erase everything!</div>
+        `
+      },
+      {
+        title: 'OOP — Classes & Objects',
+        topic: 'OOP',
+        content: `
+          <div class="lesson-topic">Object Oriented Programming</div>
+          <div class="lesson-title">Classes & Objects</div>
+          <div class="lesson-intro">OOP organizes code into "objects" — like real-world things. A class is the blueprint. An object is the real thing made from that blueprint.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">oop.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">class</span> <span class="ty">Student</span> {
+<span class="kw">public</span>:
+    <span class="ty">string</span> name;
+    <span class="ty">int</span>    age;
+
+    <span class="ty">void</span> <span class="fn">introduce</span>() {
+        cout <span class="op">&lt;&lt;</span> <span class="str">"I am "</span> <span class="op">&lt;&lt;</span> name
+             <span class="op">&lt;&lt;</span> <span class="str">", age "</span> <span class="op">&lt;&lt;</span> age <span class="op">&lt;&lt;</span> endl;
+    }
+};
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    <span class="ty">Student</span> s1;      <span class="cmt">// create object</span>
+    s1.name = <span class="str">"Ahmed"</span>;
+    s1.age  = <span class="num">20</span>;
+    s1.<span class="fn">introduce</span>();  <span class="cmt">// "I am Ahmed, age 20"</span>
+    <span class="kw">return</span> <span class="num">0</span>;
+}</pre></div>
+          <div class="info-note">💡 <strong>public:</strong> means the members can be accessed from outside the class. Later you'll learn <strong>private:</strong> for data hiding.</div>
+        `
+      }
+    ],
+    quizzes: [
+      {q:"What is a function that returns nothing called?",opts:["int function","void function","null function","empty function"],ans:1,exp:"void means 'no return value'. Use void when the function just does something but doesn't need to return a result."},
+      {q:"Array indexes in C++ start at:",opts:["1","0","-1","depends on type"],ans:1,exp:"Arrays always start at index 0. An array of 5 elements has indexes 0, 1, 2, 3, 4."},
+      {q:"What does & mean in: int* ptr = &x;",opts:["Multiply","Address of x","Value at pointer","Bitwise AND"],ans:1,exp:"& gives the memory address of a variable. &x means 'the address where x is stored in memory'."},
+      {q:"What does *ptr do when ptr is a pointer?",opts:["Gets the address","Creates a pointer","Gets the value at the address","Deletes the pointer"],ans:2,exp:"*ptr dereferences the pointer — it gets the actual value stored at the memory address ptr points to."},
+      {q:"Which class is used to WRITE to a file?",opts:["ifstream","rfstream","ofstream","wfstream"],ans:2,exp:"ofstream (output file stream) is used to write data to files. ifstream is for reading."},
+      {q:"What does ios::app do when opening a file?",opts:["Deletes the file","Overwrites the file","Appends to end of file","Reads the file"],ans:2,exp:"ios::app (append mode) adds new data to the end of the file without erasing existing content."},
+      {q:"In OOP, what is a class?",opts:["A variable","A loop","A blueprint for objects","A file"],ans:2,exp:"A class is a blueprint/template. Objects are instances (real copies) created from that blueprint."},
+      {q:"What keyword makes class members accessible from outside?",opts:["private","protected","public","extern"],ans:2,exp:"public: makes members accessible from anywhere. private: restricts access to inside the class only."},
+      {q:"What does a forward declaration do?",opts:["Defines a function completely","Tells the compiler a function exists before its definition","Deletes a function","Calls a function"],ans:1,exp:"A forward declaration (like void greet();) tells the compiler the function exists so it can be used before its full definition."},
+      {q:"What is the output of: int arr[3]={10,20,30}; cout << arr[1];",opts:["10","20","30","Error"],ans:1,exp:"arr[1] accesses index 1, which is the second element (20). Remember: indexes start at 0!"},
+      {q:"Which operator is used to access a member of an object?",opts:["->","::",".","&"],ans:2,exp:"The dot operator . accesses members of an object. e.g. student.name or student.introduce()"},
+      {q:"What does 'return' do inside a function?",opts:["Stops the loop","Exits the program","Sends a value back and exits the function","Prints a value"],ans:2,exp:"return exits the function and optionally sends a value back to where the function was called."},
+      {q:"int x=5; int* p=&x; *p=10; What is x now?",opts:["5","10","address of x","Error"],ans:1,exp:"*p=10 changes the value at the address p points to, which is x. So x becomes 10."},
+      {q:"What is the size of: string names[4]; ?",opts:["3","4","5","1"],ans:1,exp:"names[4] creates an array with 4 elements (indexes 0-3)."},
+      {q:"Which loop is best when you know the exact number of iterations?",opts:["while","do-while","for","if"],ans:2,exp:"The for loop is ideal when you know how many times to repeat: for(int i=0; i<n; i++)"}
+    ]
+  },
+
+  master: {
+    badge: 'MASTER LEVEL',
+    badgeClass: 'badge-master',
+    lessons: [
+      {
+        title: 'Templates',
+        topic: 'Advanced C++',
+        content: `
+          <div class="lesson-topic">Advanced C++</div>
+          <div class="lesson-title">Templates — Generic Programming</div>
+          <div class="lesson-intro">Templates let you write one function or class that works with ANY data type. Write it once, use it with int, double, string — anything!</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">templates.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;
+T <span class="fn">maxVal</span>(T a, T b) {
+    <span class="kw">return</span> (a > b) ? a : b;
+}
+
+<span class="kw">template</span> &lt;<span class="kw">typename</span> T&gt;
+<span class="kw">class</span> <span class="ty">Box</span> {
+<span class="kw">public</span>:
+    T value;
+    <span class="ty">Box</span>(T v) : value(v) {}
+    <span class="ty">void</span> <span class="fn">print</span>() { cout <span class="op">&lt;&lt;</span> value <span class="op">&lt;&lt;</span> endl; }
+};
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    cout <span class="op">&lt;&lt;</span> <span class="fn">maxVal</span>(<span class="num">3</span>, <span class="num">7</span>)       <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 7</span>
+    cout <span class="op">&lt;&lt;</span> <span class="fn">maxVal</span>(<span class="num">3.14</span>, <span class="num">2.71</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 3.14</span>
+    <span class="ty">Box</span>&lt;<span class="ty">string</span>&gt; b(<span class="str">"hello"</span>);
+    b.<span class="fn">print</span>();
+}</pre></div>
+          <div class="info-note">💡 <strong>typename T</strong> is a placeholder for any type. The compiler generates the right version automatically when you call the function.</div>
+        `
+      },
+      {
+        title: 'STL — Vectors & Maps',
+        topic: 'STL',
+        content: `
+          <div class="lesson-topic">Standard Template Library</div>
+          <div class="lesson-title">STL — Vectors & Maps</div>
+          <div class="lesson-intro">The STL provides powerful ready-made containers. vector is a dynamic array. map is a key-value store like a dictionary.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">stl.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">#include</span> <span class="str">&lt;vector&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;map&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;algorithm&gt;</span>
+
+<span class="cmt">// Vector — dynamic array</span>
+vector&lt;<span class="ty">int</span>&gt; v = {<span class="num">3</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">5</span>};
+v.<span class="fn">push_back</span>(<span class="num">9</span>);
+<span class="fn">sort</span>(v.<span class="fn">begin</span>(), v.<span class="fn">end</span>());  <span class="cmt">// sort!</span>
+<span class="kw">for</span> (<span class="kw">auto</span> x : v) cout <span class="op">&lt;&lt;</span> x <span class="op">&lt;&lt;</span> <span class="str">" "</span>;
+
+<span class="cmt">// Map — key/value pairs</span>
+map&lt;<span class="ty">string</span>, <span class="ty">int</span>&gt; ages;
+ages[<span class="str">"Ahmed"</span>] = <span class="num">20</span>;
+ages[<span class="str">"Sara"</span>]  = <span class="num">22</span>;
+cout <span class="op">&lt;&lt;</span> ages[<span class="str">"Ahmed"</span>] <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 20</span></pre></div>
+          <div class="info-tip">⚡ <strong>auto</strong> lets the compiler deduce the type automatically. Use it in range-based for loops for cleaner code.</div>
+        `
+      },
+      {
+        title: 'Smart Pointers',
+        topic: 'Memory Management',
+        content: `
+          <div class="lesson-topic">Memory Management</div>
+          <div class="lesson-title">Smart Pointers</div>
+          <div class="lesson-intro">Raw pointers are dangerous — you can forget to delete them (memory leak!). Smart pointers (C++11) automatically free memory when no longer needed.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">smart_ptr.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">#include</span> <span class="str">&lt;memory&gt;</span>
+
+<span class="cmt">// unique_ptr — one owner only</span>
+<span class="kw">auto</span> p1 = make_unique&lt;<span class="ty">int</span>&gt;(<span class="num">42</span>);
+cout <span class="op">&lt;&lt;</span> *p1 <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 42</span>
+<span class="cmt">// auto-deleted when p1 goes out of scope</span>
+
+<span class="cmt">// shared_ptr — multiple owners</span>
+<span class="kw">auto</span> p2 = make_shared&lt;<span class="ty">string</span>&gt;(<span class="str">"hello"</span>);
+<span class="kw">auto</span> p3 = p2;  <span class="cmt">// both point to same data</span>
+cout <span class="op">&lt;&lt;</span> *p2 <span class="op">&lt;&lt;</span> endl;
+cout <span class="op">&lt;&lt;</span> p2.<span class="fn">use_count</span>() <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 2 owners</span>
+<span class="cmt">// deleted when ALL owners go out of scope</span></pre></div>
+          <div class="info-warn">⚠️ Prefer <strong>unique_ptr</strong> by default. Use <strong>shared_ptr</strong> only when truly needed — it has overhead from reference counting.</div>
+        `
+      },
+      {
+        title: 'Lambda Functions',
+        topic: 'Modern C++',
+        content: `
+          <div class="lesson-topic">Modern C++</div>
+          <div class="lesson-title">Lambda Functions</div>
+          <div class="lesson-intro">Lambdas are anonymous functions you define inline. Perfect for short operations passed to algorithms — no need to define a separate named function.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">lambdas.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">#include</span> <span class="str">&lt;algorithm&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;vector&gt;</span>
+
+vector&lt;<span class="ty">int</span>&gt; nums = {<span class="num">5</span>,<span class="num">2</span>,<span class="num">8</span>,<span class="num">1</span>,<span class="num">9</span>};
+
+<span class="cmt">// Sort descending with lambda</span>
+<span class="fn">sort</span>(nums.<span class="fn">begin</span>(), nums.<span class="fn">end</span>(),
+    [](<span class="ty">int</span> a, <span class="ty">int</span> b) { <span class="kw">return</span> a > b; });
+
+<span class="cmt">// Lambda stored in variable</span>
+<span class="kw">auto</span> square = [](<span class="ty">int</span> x) { <span class="kw">return</span> x * x; };
+cout <span class="op">&lt;&lt;</span> <span class="fn">square</span>(<span class="num">5</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 25</span>
+
+<span class="cmt">// Capture outside variable</span>
+<span class="ty">int</span> factor = <span class="num">3</span>;
+<span class="kw">auto</span> multiply = [factor](<span class="ty">int</span> x) { <span class="kw">return</span> x * factor; };
+cout <span class="op">&lt;&lt;</span> <span class="fn">multiply</span>(<span class="num">7</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cmt">// 21</span></pre></div>
+          <div class="info-note">💡 Lambda syntax: <strong>[capture](params) { body }</strong>. The [] is the capture list — put variables from outer scope here if needed.</div>
+        `
+      },
+      {
+        title: 'Inheritance & Polymorphism',
+        topic: 'Advanced OOP',
+        content: `
+          <div class="lesson-topic">Advanced OOP</div>
+          <div class="lesson-title">Inheritance & Polymorphism</div>
+          <div class="lesson-intro">Inheritance lets a class reuse another class's code. Polymorphism lets different classes share the same interface but behave differently.</div>
+          <div class="code-block"><div class="code-top"><span class="code-filename">inheritance.cpp</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre><span class="kw">class</span> <span class="ty">Animal</span> {
+<span class="kw">public</span>:
+    <span class="ty">string</span> name;
+    <span class="kw">virtual</span> <span class="ty">void</span> <span class="fn">speak</span>() {
+        cout <span class="op">&lt;&lt;</span> <span class="str">"..."</span> <span class="op">&lt;&lt;</span> endl;
+    }
+};
+
+<span class="kw">class</span> <span class="ty">Dog</span> : <span class="kw">public</span> <span class="ty">Animal</span> {
+<span class="kw">public</span>:
+    <span class="ty">void</span> <span class="fn">speak</span>() <span class="kw">override</span> {
+        cout <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="str">": Woof!"</span> <span class="op">&lt;&lt;</span> endl;
+    }
+};
+
+<span class="kw">class</span> <span class="ty">Cat</span> : <span class="kw">public</span> <span class="ty">Animal</span> {
+<span class="kw">public</span>:
+    <span class="ty">void</span> <span class="fn">speak</span>() <span class="kw">override</span> {
+        cout <span class="op">&lt;&lt;</span> name <span class="op">&lt;&lt;</span> <span class="str">": Meow!"</span> <span class="op">&lt;&lt;</span> endl;
+    }
+};
+
+<span class="ty">int</span> <span class="fn">main</span>() {
+    <span class="ty">Animal</span>* a1 = <span class="kw">new</span> <span class="ty">Dog</span>(); a1->name=<span class="str">"Rex"</span>;
+    <span class="ty">Animal</span>* a2 = <span class="kw">new</span> <span class="ty">Cat</span>(); a2->name=<span class="str">"Luna"</span>;
+    a1-><span class="fn">speak</span>();  <span class="cmt">// Rex: Woof!</span>
+    a2-><span class="fn">speak</span>();  <span class="cmt">// Luna: Meow!</span>
+}</pre></div>
+          <div class="info-tip">⚡ <strong>virtual</strong> enables polymorphism. <strong>override</strong> confirms you're overriding a virtual function (catches typos). Use <strong>-></strong> to access members through a pointer.</div>
+        `
+      }
+    ],
+    quizzes: [
+      {q:"What does 'template <typename T>' do?",opts:["Creates a new type","Defines a generic function/class for any type","Imports a library","Creates a pointer"],ans:1,exp:"template <typename T> lets you write one function/class that works with any data type — T becomes a placeholder."},
+      {q:"What does vector.push_back(x) do?",opts:["Removes last element","Sorts the vector","Adds x to the end","Inserts at beginning"],ans:2,exp:"push_back() adds an element to the END of the vector, dynamically resizing it."},
+      {q:"What is a unique_ptr?",opts:["A raw pointer","A smart pointer with single ownership","A shared pointer","A null pointer"],ans:1,exp:"unique_ptr has exactly ONE owner. When it goes out of scope, memory is automatically freed. No manual delete needed!"},
+      {q:"Lambda syntax in C++ is:",opts:["fn(params){}","[capture](params){body}","lambda params: body","def fn(params){}"],ans:1,exp:"Lambda syntax: [capture list](parameters){ function body }. The [] captures variables from the surrounding scope."},
+      {q:"What does 'virtual' keyword do in a class?",opts:["Makes a private member","Enables polymorphism by allowing override","Creates a template","Prevents inheritance"],ans:1,exp:"virtual enables runtime polymorphism — derived classes can override the function, and the correct version is called through a base pointer."},
+      {q:"What does map<string,int> store?",opts:["Only strings","Only integers","String keys mapped to integer values","Integer keys mapped to strings"],ans:2,exp:"map<string,int> stores key-value pairs where keys are strings and values are integers, like a dictionary."},
+      {q:"What is the capture list [] in a lambda for?",opts:["Defines return type","Captures variables from the outer scope","Names the lambda","Defines parameters"],ans:1,exp:"The capture list [] lets the lambda access variables from the surrounding scope. [x] captures x by value, [&x] by reference."},
+      {q:"shared_ptr differs from unique_ptr because:",opts:["It's faster","It allows multiple owners","It doesn't free memory","It works with arrays only"],ans:1,exp:"shared_ptr uses reference counting to allow multiple owners. Memory is freed only when ALL shared_ptrs to it are destroyed."},
+      {q:"What does 'override' keyword do?",opts:["Prevents overriding","Explicitly declares you're overriding a virtual function","Creates a new virtual function","Hides a base class function"],ans:1,exp:"override explicitly tells the compiler you intend to override a virtual function — it catches bugs if the base function signature doesn't match."},
+      {q:"What does sort(v.begin(), v.end()) do?",opts:["Reverses the vector","Sorts vector in ascending order","Shuffles the vector","Removes duplicates"],ans:1,exp:"sort() from <algorithm> sorts the range in ascending order. Pass a custom comparator lambda for different orderings."},
+      {q:"In 'class Dog : public Animal', what is Animal?",opts:["Derived class","Friend class","Base class","Template class"],ans:2,exp:"Animal is the BASE class (parent). Dog is the DERIVED class (child) that inherits Animal's members."},
+      {q:"What does auto keyword do?",opts:["Creates automatic memory","Lets compiler deduce the type","Deletes a variable","Creates a constant"],ans:1,exp:"auto tells the compiler to automatically figure out the variable's type from its initializer. Cleaner code, especially with iterators."},
+      {q:"make_unique<int>(42) creates:",opts:["A raw pointer to int 42","A shared pointer","A unique_ptr managing an int with value 42","An int array"],ans:2,exp:"make_unique<int>(42) creates a unique_ptr that manages a heap-allocated int initialized to 42. Prefer this over raw new."},
+      {q:"Range-based for loop 'for(auto x : v)' does what?",opts:["Iterates by index","Iterates over each element directly","Only works with arrays","Needs begin/end"],ans:1,exp:"Range-based for iterates over each element directly without index management. 'auto x' gets each element by value."},
+      {q:"What is the -> operator used for?",opts:["Division","Access member through a pointer","Template instantiation","Bitwise shift"],ans:1,exp:"-> accesses a member through a pointer. p->name is equivalent to (*p).name. Used heavily with pointers to objects."}
+    ]
+  }
+};
+
+// ============================================================
+//  STATE
+// ============================================================
+let currentLevel = null;
+let currentLesson = 0;
+let currentQuestion = 0;
+let quizScore = 0;
+let quizAnswers = [];
+
+// ============================================================
+//  SCREEN MANAGEMENT
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+// ============================================================
+//  WELCOME → LESSONS
+// ============================================================
+function startLevel(level) {
+  currentLevel = level;
+  currentLesson = 0;
+  const data = LEVELS[level];
+
+  // Badge
+  const badge = document.getElementById('level-badge');
+  badge.textContent = data.badge;
+  badge.className = 'lesson-level-badge ' + data.badgeClass;
+
+  // Build sidebar nav
+  const nav = document.getElementById('lesson-nav');
+  nav.innerHTML = '';
+  data.lessons.forEach((l, i) => {
+    nav.innerHTML += `
+      <div class="lesson-nav-item ${i===0?'active':''}" id="nav-${i}" onclick="goToLesson(${i})">
+        <span class="nav-num">${String(i+1).padStart(2,'0')}</span>
+        <span style="flex:1">${l.title}</span>
+      </div>`;
+  });
+
+  // Build lesson content
+  const main = document.getElementById('lesson-main');
+  main.innerHTML = '';
+  data.lessons.forEach((l, i) => {
+    const div = document.createElement('div');
+    div.className = 'lesson-content' + (i===0?' active':'');
+    div.id = 'lesson-' + i;
+    div.innerHTML = l.content + `
+      <button class="next-btn ${i===data.lessons.length-1?'quiz-start-btn':''}" onclick="${i===data.lessons.length-1?'goToQuiz()':'goToLesson('+(i+1)+')'} ">
+        ${i===data.lessons.length-1?'🧠 Take the Quiz':'Next Lesson →'}
+      </button>`;
+    main.appendChild(div);
+  });
+
+  updateLessonProgress();
+  showScreen('lesson');
+}
+
+function goToLesson(i) {
+  const data = LEVELS[currentLevel];
+  document.querySelectorAll('.lesson-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.lesson-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('lesson-' + i).classList.add('active');
+  document.getElementById('nav-' + i).classList.add('active');
+  currentLesson = i;
+  updateLessonProgress();
+  document.querySelector('.lesson-main').scrollTop = 0;
+}
+
+function updateLessonProgress() {
+  const pct = ((currentLesson + 1) / LEVELS[currentLevel].lessons.length) * 100;
+  document.getElementById('lesson-progress').style.width = pct + '%';
+}
+
+// ============================================================
+//  QUIZ
+// ============================================================
+function goToQuiz() {
+  currentQuestion = 0;
+  quizScore = 0;
+  quizAnswers = [];
+  buildQuizDots();
+  renderQuestion();
+  showScreen('quiz');
+}
+
+function buildQuizDots() {
+  const dots = document.getElementById('quiz-dots');
+  dots.innerHTML = '';
+  for (let i = 0; i < 15; i++) {
+    dots.innerHTML += `<div class="q-dot ${i===0?'current':''}" id="dot-${i}"></div>`;
+  }
+}
+
+function renderQuestion() {
+  const q = LEVELS[currentLevel].quizzes[currentQuestion];
+  document.getElementById('q-num').textContent = currentQuestion + 1;
+  document.getElementById('live-score').textContent = quizScore;
+
+  const letters = ['A','B','C','D'];
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="quiz-q-num">QUESTION ${currentQuestion+1} OF 15</div>
+    <div class="quiz-question">${q.q}</div>
+    <div class="options">
+      ${q.opts.map((o,i) => `
+        <div class="opt" id="opt-${i}" onclick="answerQ(${i})">
+          <div class="opt-letter">${letters[i]}</div>
+          <span>${o}</span>
+        </div>`).join('')}
+    </div>
+    <div class="feedback-box" id="feedback"></div>
+    <button class="next-q-btn" id="next-q-btn" onclick="nextQuestion()">
+      ${currentQuestion===14?'See Results 🎯':'Next Question →'}
+    </button>
+  `;
+}
+
+function answerQ(chosen) {
+  const q = LEVELS[currentLevel].quizzes[currentQuestion];
+  const opts = document.querySelectorAll('.opt');
+  opts.forEach(o => o.classList.add('locked'));
+  opts.forEach(o => o.style.cursor = 'default');
+
+  const feedback = document.getElementById('feedback');
+  const nextBtn = document.getElementById('next-q-btn');
+  const dot = document.getElementById('dot-' + currentQuestion);
+
+  if (chosen === q.ans) {
+    opts[chosen].classList.add('correct');
+    feedback.className = 'feedback-box show ok';
+    feedback.innerHTML = '✅ Correct! ' + q.exp;
+    quizScore++;
+    dot.className = 'q-dot correct';
+  } else {
+    opts[chosen].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    feedback.className = 'feedback-box show fail';
+    feedback.innerHTML = '❌ Wrong. ' + q.exp;
+    dot.className = 'q-dot wrong';
+  }
+
+  quizAnswers.push(chosen === q.ans);
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  currentQuestion++;
+  if (currentQuestion >= 15) {
+    showResult();
+    return;
+  }
+  // update dot
+  const prevDot = document.getElementById('dot-' + (currentQuestion - 1));
+  const curDot = document.getElementById('dot-' + currentQuestion);
+  if (curDot) curDot.classList.add('current');
+
+  renderQuestion();
+}
+
+// ============================================================
+//  RESULT
+// ============================================================
+function showResult() {
+  const pct = Math.round((quizScore / 15) * 100);
+  let icon, title, msg;
+
+  if (pct >= 90) {
+    icon = '🏆'; title = 'OUTSTANDING!';
+    msg = 'Incredible work! You have mastered this level. Consider moving up to the next challenge!';
+  } else if (pct >= 70) {
+    icon = '🎉'; title = 'GREAT JOB!';
+    msg = 'You did really well! Review the questions you missed and retake to hit 90%+.';
+  } else if (pct >= 50) {
+    icon = '📚'; title = 'KEEP GOING!';
+    msg = 'Good effort! Go back and review the lessons, then try again. You\'ve got this!';
+  } else {
+    icon = '💪'; title = 'DON\'T GIVE UP!';
+    msg = 'Programming takes practice! Review all the lessons carefully and retake the quiz.';
+  }
+
+  document.getElementById('result-icon').textContent = icon;
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-score').textContent = pct + '%';
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('rb-correct').textContent = quizScore;
+  document.getElementById('rb-wrong').textContent = 15 - quizScore;
+  document.getElementById('rb-pct').textContent = pct + '%';
+
+  showScreen('result');
+}
+
+function retakeQuiz() { goToQuiz(); }
+function backToLessons() { showScreen('lesson'); }
+function backToWelcome() { showScreen('welcome'); }
+
+// ============================================================
+//  COPY CODE
+// ============================================================
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = '✓ done';
+    btn.classList.add('ok');
+    setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('ok'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>
